@@ -19,7 +19,7 @@ echo %formattedDate%
 docker build -t wechat-server .
 
 :: 运行 Docker 容器
-docker run -d -p 3000:3000 wechat-server
+docker run -d -p 4000:3000 wechat-server
 
 pause
 
@@ -28,5 +28,7 @@ docker login
 
 :: 为镜像打标签，使用格式化后的日期作为标签
 docker tag wechat-server:latest sagaii/wechat-server:%formattedDate%
+
+docker push sagaii/wechat-server:%formattedDate%
 
 endlocal
