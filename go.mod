@@ -1,7 +1,7 @@
 module wechat-server
 
-// +heroku goVersion go1.18
-go 1.18
+// goVersion go1.21.10
+go 1.21
 
 require (
 	github.com/gin-contrib/sessions v0.0.5

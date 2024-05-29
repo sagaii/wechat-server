@@ -6,7 +6,7 @@ COPY ./VERSION .
 RUN npm install
 RUN REACT_APP_VERSION=$(cat VERSION) npm run build
 
-FROM golang AS builder2
+FROM golang:1.21.10 AS builder2
 
 ENV GO111MODULE=on \
     CGO_ENABLED=1 \
