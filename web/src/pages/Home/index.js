@@ -23,7 +23,7 @@ const Home = () => {
   return (
     <>
       <Segment>
-        <Header as="h3">示例标题</Header>
+        <Header as="h3">Home</Header>
         <Grid columns={3} stackable>
           <Grid.Column>
             <Segment raised>

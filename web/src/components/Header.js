@@ -14,15 +14,26 @@ const headerButtons = [
     icon: 'home',
   },
   {
-    name: '用户',
+    name: '用户*',
     to: '/user',
     icon: 'user',
+    admin: true,
+  },
+  {
+    name: '日志*',
+    to: '/logview',
+    icon: 'file text',
     admin: true,
   },
   {
     name: '设置',
     to: '/setting',
     icon: 'setting',
+  },
+  {
+    name: '关于',
+    to: '/about',
+    icon: 'info circle',
   },
 ];
 

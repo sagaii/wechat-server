@@ -7,6 +7,7 @@ import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import NotFound from './pages/NotFound';
 import Setting from './pages/Setting';
+import LogView from './pages/LogView';
 import EditUser from './pages/User/EditUser';
 import AddUser from './pages/User/AddUser';
 import { API, showError } from './helpers';
@@ -38,7 +39,7 @@ function App() {
         path="/"
         element={
           <Suspense fallback={<Loading></Loading>}>
-            <About />
+            <Home />
           </Suspense>
         }
       />
@@ -112,6 +113,16 @@ function App() {
           <PrivateRoute>
             <Suspense fallback={<Loading></Loading>}>
               <Setting />
+            </Suspense>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/logview"
+        element={
+          <PrivateRoute>
+            <Suspense fallback={<Loading></Loading>}>
+              <LogView />
             </Suspense>
           </PrivateRoute>
         }

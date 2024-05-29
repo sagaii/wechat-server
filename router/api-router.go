@@ -1,9 +1,10 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
 	"wechat-server/controller"
 	"wechat-server/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 func SetApiRouter(router *gin.Engine) {
@@ -45,6 +46,14 @@ func SetApiRouter(router *gin.Engine) {
 				adminRoute.DELETE("/:id", controller.DeleteUser)
 			}
 		}
+
+		logRoute := apiRouter.Group("/logs")
+		logRoute.Use(middleware.RootAuth(), middleware.NoTokenAuth())
+		{
+			logRoute.GET("/common", controller.GetCommonLogs)
+			logRoute.GET("/error", controller.GetErrorLogs)
+		}
+
 		optionRoute := apiRouter.Group("/option")
 		optionRoute.Use(middleware.RootAuth(), middleware.NoTokenAuth())
 		{

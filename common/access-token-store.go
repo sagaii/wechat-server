@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -17,6 +18,8 @@ type accessTokenStore struct {
 type response struct {
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int    `json:"expires_in"`
+	ErrCode     int    `json:"errcode"`
+	ErrMsg      string `json:"errmsg"`
 }
 
 var s accessTokenStore
@@ -39,6 +42,7 @@ func RefreshAccessToken() {
 		Timeout: 5 * time.Second,
 	}
 	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", WeChatAppID, WeChatAppSecret), nil)
+	//SysLog(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", WeChatAppID, WeChatAppSecret))
 	if err != nil {
 		SysError(err.Error())
 		return
@@ -55,6 +59,12 @@ func RefreshAccessToken() {
 		SysError("failed to decode response: " + err.Error())
 		return
 	}
+
+	if res.ErrCode != 0 {
+		SysError("access token request failed with errcode: " + strconv.Itoa(res.ErrCode) + ", errmsg: " + res.ErrMsg)
+		return
+	}
+
 	s.Mutex.Lock()
 	s.AccessToken = res.AccessToken
 	s.ExpirationSeconds = res.ExpiresIn

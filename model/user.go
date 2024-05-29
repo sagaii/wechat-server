@@ -13,7 +13,7 @@ type User struct {
 	DisplayName      string `json:"display_name"`
 	Role             int    `json:"role" gorm:"type:int;default:1"`   // admin, common
 	Status           int    `json:"status" gorm:"type:int;default:1"` // enabled, disabled
-	Token            string `json:"token;" gorm:"index"`
+	Token            string `json:"token" gorm:"index"`
 	Email            string `json:"email" gorm:"index"`
 	VerificationCode string `json:"verification_code" gorm:"-:all"`
 }
