@@ -37,39 +37,46 @@ func InitAccessTokenStore() {
 }
 
 func RefreshAccessToken() {
-	// https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Get_access_token.html
 	client := http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 25 * time.Second, // Increased timeout to handle potential network delays
 	}
 	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", WeChatAppID, WeChatAppSecret), nil)
-	//SysLog(fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", WeChatAppID, WeChatAppSecret))
 	if err != nil {
 		SysError(err.Error())
 		return
 	}
-	responseData, err := client.Do(req)
-	if err != nil {
-		SysError("failed to refresh access token: " + err.Error())
-		return
-	}
-	defer responseData.Body.Close()
-	var res response
-	err = json.NewDecoder(responseData.Body).Decode(&res)
-	if err != nil {
-		SysError("failed to decode response: " + err.Error())
-		return
-	}
 
-	if res.ErrCode != 0 {
-		SysError("access token request failed with errcode: " + strconv.Itoa(res.ErrCode) + ", errmsg: " + res.ErrMsg)
-		return
-	}
+	for attempts := 0; attempts < 3; attempts++ {
+		responseData, err := client.Do(req)
+		if err != nil {
+			SysError(fmt.Sprintf("attempt %d: failed to refresh access token for URL %s: %v", attempts+1, req.URL, err))
+			time.Sleep(5 * time.Second) // Wait before retrying
+			continue
+		}
 
-	s.Mutex.Lock()
-	s.AccessToken = res.AccessToken
-	s.ExpirationSeconds = res.ExpiresIn
-	s.Mutex.Unlock()
-	SysLog("access token refreshed")
+		if responseData != nil && responseData.Body != nil {
+			defer responseData.Body.Close()
+			var res response
+			if err = json.NewDecoder(responseData.Body).Decode(&res); err == nil {
+				if res.ErrCode != 0 {
+					SysError("access token request failed with errcode: " + strconv.Itoa(res.ErrCode) + ", errmsg: " + res.ErrMsg)
+					time.Sleep(5 * time.Second) // Wait before retrying
+					continue
+				}
+				s.Mutex.Lock()
+				s.AccessToken = res.AccessToken
+				s.ExpirationSeconds = res.ExpiresIn
+				s.Mutex.Unlock()
+				SysLog("access token refreshed")
+				break // Success, exit retry loop
+			} else {
+				SysError(fmt.Sprintf("attempt %d: failed to decode response: %v", attempts+1, err))
+			}
+		} else {
+			SysError(fmt.Sprintf("attempt %d: responseData or responseData.Body is nil", attempts+1))
+		}
+		time.Sleep(5 * time.Second) // Wait before retrying
+	}
 }
 
 func GetAccessTokenAndExpirationSeconds() (string, int) {
