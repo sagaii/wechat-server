@@ -11,8 +11,9 @@ const EditUser = () => {
     username: '',
     display_name: '',
     password: '',
+    token:'',
   });
-  const { username, display_name, password } = inputs;
+  const { username, display_name, password ,token} = inputs;
   const handleInputChange = (e, { name, value }) => {
     setInputs((inputs) => ({ ...inputs, [name]: value }));
   };
@@ -80,6 +81,15 @@ const EditUser = () => {
               onChange={handleInputChange}
               value={password}
               autoComplete="off"
+            />
+          </Form.Field>
+          <Form.Field>
+            <Form.Input
+              label="用户访问令牌（只读）"
+              name="token" 
+              value={token}
+              autoComplete="off"
+              readonly
             />
           </Form.Field>
           <Form.Field>
