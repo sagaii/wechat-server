@@ -59,6 +59,7 @@ func RefreshAccessToken() {
 			var res response
 			if err = json.NewDecoder(responseData.Body).Decode(&res); err == nil {
 				if res.ErrCode != 0 {
+					SysError(fmt.Sprintf("attempt %d: failed to refresh access token:  %s: %v", attempts+1, req.URL, err))
 					SysError("access token request failed with errcode: " + strconv.Itoa(res.ErrCode) + ", errmsg: " + res.ErrMsg)
 					time.Sleep(5 * time.Second) // Wait before retrying
 					continue
