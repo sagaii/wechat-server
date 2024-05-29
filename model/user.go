@@ -29,7 +29,7 @@ func GetUserById(id int, selectAll bool) (*User, error) {
 	if selectAll {
 		err = DB.First(&user, "id = ?", id).Error
 	} else {
-		err = DB.Select([]string{"id", "username", "display_name", "role", "status", "email"}).First(&user, "id = ?", id).Error
+		err = DB.Select([]string{"id", "username", "display_name", "role", "token", "status", "email"}).First(&user, "id = ?", id).Error
 	}
 	return &user, err
 }

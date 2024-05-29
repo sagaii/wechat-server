@@ -4,20 +4,20 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
-	"strings"
 	"wechat-server/common"
 	"wechat-server/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetOptions(c *gin.Context) {
 	var options []*model.Option
 	common.OptionMapRWMutex.Lock()
 	for k, v := range common.OptionMap {
-		if strings.Contains(k, "Token") || strings.Contains(k, "Secret") || strings.Contains(k, "Key") {
-			continue
-		}
+		// if strings.Contains(k, "Token") || strings.Contains(k, "Secret") || strings.Contains(k, "Key") {
+		// 	continue
+		// }
 		options = append(options, &model.Option{
 			Key:   k,
 			Value: common.Interface2String(v),
