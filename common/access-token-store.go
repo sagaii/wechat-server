@@ -67,7 +67,7 @@ func RefreshAccessToken() {
 				s.AccessToken = res.AccessToken
 				s.ExpirationSeconds = res.ExpiresIn
 				s.Mutex.Unlock()
-				SysLog("access token refreshed")
+				SysLog("========>access token refreshed:" + res.AccessToken)
 				break // Success, exit retry loop
 			} else {
 				SysError(fmt.Sprintf("attempt %d: failed to decode response: %v", attempts+1, err))
